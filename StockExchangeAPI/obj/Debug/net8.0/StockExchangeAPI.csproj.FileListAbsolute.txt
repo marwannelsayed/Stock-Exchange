@@ -138,3 +138,4 @@
 /Users/marwannelsayed/Desktop/Derayah/Stock-Exchange/StockExchangeAPI/bin/Debug/net8.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.resources.dll
 /Users/marwannelsayed/Desktop/Derayah/Stock-Exchange/StockExchangeAPI/bin/Debug/net8.0/MySqlConnector.dll
 /Users/marwannelsayed/Desktop/Derayah/Stock-Exchange/StockExchangeAPI/bin/Debug/net8.0/Pomelo.EntityFrameworkCore.MySql.dll
+/Users/marwannelsayed/Desktop/Derayah/Stock-Exchange/StockExchangeAPI/obj/Debug/net8.0/StockExchangeAPI.sourcelink.json

@@ -15,6 +15,11 @@ public class InMemoryStockRepository : IStockRepository
         return _context.Stocks.AsNoTracking().ToList();
     }
 
+    public IEnumerable<StockHistory> GetStockHistory(string symbol)
+    {
+        return _context.StockHistories.AsNoTracking().Where(s => s.StockSymbol == symbol).ToList();
+    }
+
     public void UpdateStocks(IEnumerable<Stock> stocks)
     {
         _context.Stocks.RemoveRange(_context.Stocks); // Clear existing stocks

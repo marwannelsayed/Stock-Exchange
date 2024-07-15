@@ -40,6 +40,12 @@ public class UpdateStocksBackgroundService : IHostedService, IDisposable
                     var existingStock = context.Stocks.FirstOrDefault(s => s.StockSymbol == newStock.StockSymbol);
                     if (existingStock != null)
                     {
+                        context.StockHistories.Add(new StockHistory
+                        {
+                            StockSymbol = existingStock.StockSymbol,
+                            Price = existingStock.Price,
+                            TimeStamp = existingStock.TimeStamp
+                        });
                         existingStock.Price = newStock.Price;
                         existingStock.TimeStamp = newStock.TimeStamp;
                     }

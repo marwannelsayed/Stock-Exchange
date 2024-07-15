@@ -12,7 +12,7 @@ using StockExchangeAPI.Models;
 namespace StockExchangeAPI.Migrations
 {
     [DbContext(typeof(StockExchangeDBContext))]
-    [Migration("20240714142950_MyFirstMigration")]
+    [Migration("20240714175419_MyFirstMigration")]
     partial class MyFirstMigration
     {
         /// <inheritdoc />
@@ -47,6 +47,30 @@ namespace StockExchangeAPI.Migrations
                     b.HasKey("StockId");
 
                     b.ToTable("Stocks");
+                });
+
+            modelBuilder.Entity("StockExchangeAPI.Models.StockHistory", b =>
+                {
+                    b.Property<int>("StockId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("StockId"));
+
+                    b.Property<float>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<string>("StockSymbol")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("StockId");
+
+                    b.ToTable("StockHistories");
                 });
 #pragma warning restore 612, 618
         }

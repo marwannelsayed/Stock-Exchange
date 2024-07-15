@@ -7,29 +7,49 @@ namespace StockExchangeAPI.Controllers;
 [Route("[controller]")]
 public class StockExchangeController : ControllerBase
 {
-    private readonly IStockRepository _stockService;
+    private readonly IStockRepository _stockRepo;
 
-    public StockExchangeController(IStockRepository stockService)
+    public StockExchangeController(IStockRepository stockRepo)
     {
-        _stockService = stockService;
+        _stockRepo = stockRepo;
     }
 
     [HttpGet("api/stocks", Name = "GetStocks")]
     public IEnumerable<Stock> Get()
     {
-        return _stockService.GetStocks();
+        return _stockRepo.GetStocks();
     }
 
     [HttpGet("api/stocks/{symbol}/history", Name = "GetStockHistory")]
-    public IEnumerable<StockExchange> GetStockHistory(string symbol)
+    public IEnumerable<StockHistory> GetStockHistory(string symbol, DateTime? date, int pageNumber, int pageSize)
     {
-        // Replace this with your actual logic to retrieve historical data
-        return Enumerable.Range(1, 10).Select(index => new StockExchange
+        var query = _stockRepo.GetStockHistory(symbol).AsQueryable();
+
+        if (date.HasValue)
         {
-            StockSymbol = symbol,
-            Price = Random.Shared.Next(100, 200),
-            TimeStamp = DateTime.Now.AddMinutes(-index * 5)
-        })
-        .ToArray();
+            query = query.Where(h => h.TimeStamp.Date == date.Value.Date);
+        }
+
+        var totalCount = query.Count();
+        var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+        if (pageNumber > totalPages)
+        {
+            pageNumber = totalPages > 0 ? totalPages : 1;
+        }
+
+        var skip = (pageNumber - 1) * pageSize;
+
+        if (pageNumber > totalPages)
+        {
+            skip = totalCount - pageSize;
+        }
+
+        var results = query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToList();
+
+        return results;
     }
 }
