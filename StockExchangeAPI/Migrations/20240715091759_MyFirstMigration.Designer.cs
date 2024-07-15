@@ -12,7 +12,7 @@ using StockExchangeAPI.Models;
 namespace StockExchangeAPI.Migrations
 {
     [DbContext(typeof(StockExchangeDBContext))]
-    [Migration("20240714175419_MyFirstMigration")]
+    [Migration("20240715091759_MyFirstMigration")]
     partial class MyFirstMigration
     {
         /// <inheritdoc />
@@ -71,6 +71,29 @@ namespace StockExchangeAPI.Migrations
                     b.HasKey("StockId");
 
                     b.ToTable("StockHistories");
+                });
+
+            modelBuilder.Entity("StockExchangeAPI.Models.User", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("UserId"));
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }

@@ -11,5 +11,6 @@ namespace StockExchangeAPI.Models
 
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<StockHistory> StockHistories { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

@@ -1,55 +1,58 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StockExchangeAPI.Models;
 
-namespace StockExchangeAPI.Controllers;
-
-[ApiController]
-[Route("[controller]")]
-public class StockExchangeController : ControllerBase
+namespace StockExchangeAPI.Controllers
 {
-    private readonly IStockRepository _stockRepo;
-
-    public StockExchangeController(IStockRepository stockRepo)
+    [ApiController]
+    [Route("[controller]")]
+    [Authorize]
+    public class StockExchangeController : ControllerBase
     {
-        _stockRepo = stockRepo;
-    }
+        private readonly IStockRepository _stockRepo;
 
-    [HttpGet("api/stocks", Name = "GetStocks")]
-    public IEnumerable<Stock> Get()
-    {
-        return _stockRepo.GetStocks();
-    }
-
-    [HttpGet("api/stocks/{symbol}/history", Name = "GetStockHistory")]
-    public IEnumerable<StockHistory> GetStockHistory(string symbol, DateTime? date, int pageNumber, int pageSize)
-    {
-        var query = _stockRepo.GetStockHistory(symbol).AsQueryable();
-
-        if (date.HasValue)
+        public StockExchangeController(IStockRepository stockRepo)
         {
-            query = query.Where(h => h.TimeStamp.Date == date.Value.Date);
+            _stockRepo = stockRepo;
         }
 
-        var totalCount = query.Count();
-        var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-
-        if (pageNumber > totalPages)
+        [HttpGet("api/stocks", Name = "GetStocks")]
+        public IEnumerable<Stock> Get()
         {
-            pageNumber = totalPages > 0 ? totalPages : 1;
+            return _stockRepo.GetStocks();
         }
 
-        var skip = (pageNumber - 1) * pageSize;
-
-        if (pageNumber > totalPages)
+        [HttpGet("api/stocks/{symbol}/history", Name = "GetStockHistory")]
+        public IEnumerable<StockHistory> GetStockHistory(string symbol, DateTime? date, int pageNumber, int pageSize)
         {
-            skip = totalCount - pageSize;
+            var query = _stockRepo.GetStockHistory(symbol).AsQueryable();
+
+            if (date.HasValue)
+            {
+                query = query.Where(h => h.TimeStamp.Date == date.Value.Date);
+            }
+
+            var totalCount = query.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            if (pageNumber > totalPages)
+            {
+                pageNumber = totalPages > 0 ? totalPages : 1;
+            }
+
+            var skip = (pageNumber - 1) * pageSize;
+
+            if (pageNumber > totalPages)
+            {
+                skip = totalCount - pageSize;
+            }
+
+            var results = query
+                .Skip(skip)
+                .Take(pageSize)
+                .ToList();
+
+            return results;
         }
-
-        var results = query
-            .Skip(skip)
-            .Take(pageSize)
-            .ToList();
-
-        return results;
     }
 }
