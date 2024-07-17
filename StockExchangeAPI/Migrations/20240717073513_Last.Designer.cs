@@ -12,8 +12,8 @@ using StockExchangeAPI.Models;
 namespace StockExchangeAPI.Migrations
 {
     [DbContext(typeof(StockExchangeDBContext))]
-    [Migration("20240715102353_MySecondMigration")]
-    partial class MySecondMigration
+    [Migration("20240717073513_Last")]
+    partial class Last
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,33 @@ namespace StockExchangeAPI.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("StockExchangeAPI.Models.BoughtStock", b =>
+                {
+                    b.Property<int>("BoughtStockId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("BoughtStockId"));
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StockId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StockSymbol")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.HasKey("BoughtStockId");
+
+                    b.ToTable("BoughtStocks");
+                });
+
             modelBuilder.Entity("StockExchangeAPI.Models.Stock", b =>
                 {
                     b.Property<int>("StockId")
@@ -33,8 +60,8 @@ namespace StockExchangeAPI.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("StockId"));
 
-                    b.Property<float>("Price")
-                        .HasColumnType("float");
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
 
                     b.Property<string>("StockSymbol")
                         .IsRequired()
@@ -57,8 +84,8 @@ namespace StockExchangeAPI.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("StockId"));
 
-                    b.Property<float>("Price")
-                        .HasColumnType("float");
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
 
                     b.Property<string>("StockSymbol")
                         .IsRequired()

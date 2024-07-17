@@ -86,6 +86,12 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseCors(builder => builder
+    .WithOrigins("http://localhost:3000")
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials());
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

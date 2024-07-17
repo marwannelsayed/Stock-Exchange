@@ -4,10 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace StockExchangeAPI.Models
 {
-    public class Stock
+    public class BoughtStock
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int BoughtStockId { get; set; }
+        [Required]
         public int StockId { get; set; }
         [Required]
         [MaxLength(20)]
@@ -15,7 +17,7 @@ namespace StockExchangeAPI.Models
         [Required]
         public int Price { get; set; }
         [Required]
-        public DateTime TimeStamp { get; set; }
+        public int Quantity { get; set; }
     }
 
 

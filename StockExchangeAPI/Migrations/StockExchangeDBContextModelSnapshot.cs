@@ -22,6 +22,33 @@ namespace StockExchangeAPI.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("StockExchangeAPI.Models.BoughtStock", b =>
+                {
+                    b.Property<int>("BoughtStockId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("BoughtStockId"));
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StockId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StockSymbol")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.HasKey("BoughtStockId");
+
+                    b.ToTable("BoughtStocks");
+                });
+
             modelBuilder.Entity("StockExchangeAPI.Models.Stock", b =>
                 {
                     b.Property<int>("StockId")
@@ -30,8 +57,8 @@ namespace StockExchangeAPI.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("StockId"));
 
-                    b.Property<float>("Price")
-                        .HasColumnType("float");
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
 
                     b.Property<string>("StockSymbol")
                         .IsRequired()
@@ -54,8 +81,8 @@ namespace StockExchangeAPI.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("StockId"));
 
-                    b.Property<float>("Price")
-                        .HasColumnType("float");
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
 
                     b.Property<string>("StockSymbol")
                         .IsRequired()

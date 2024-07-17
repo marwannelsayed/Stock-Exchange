@@ -13,7 +13,7 @@ namespace StockExchangeAPI.Models
         [MaxLength(20)]
         public string? StockSymbol { get; set; }
         [Required]
-        public float Price { get; set; }
+        public int Price { get; set; }
         [Required]
         public DateTime TimeStamp { get; set; }
     }

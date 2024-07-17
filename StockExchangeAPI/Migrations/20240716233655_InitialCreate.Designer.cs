@@ -12,8 +12,8 @@ using StockExchangeAPI.Models;
 namespace StockExchangeAPI.Migrations
 {
     [DbContext(typeof(StockExchangeDBContext))]
-    [Migration("20240715091759_MyFirstMigration")]
-    partial class MyFirstMigration
+    [Migration("20240716233655_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,8 +33,8 @@ namespace StockExchangeAPI.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("StockId"));
 
-                    b.Property<float>("Price")
-                        .HasColumnType("float");
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
 
                     b.Property<string>("StockSymbol")
                         .IsRequired()
@@ -57,8 +57,8 @@ namespace StockExchangeAPI.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("StockId"));
 
-                    b.Property<float>("Price")
-                        .HasColumnType("float");
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
 
                     b.Property<string>("StockSymbol")
                         .IsRequired()
@@ -83,8 +83,8 @@ namespace StockExchangeAPI.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
 
                     b.Property<string>("Username")
                         .IsRequired()
