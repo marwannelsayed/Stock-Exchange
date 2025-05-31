@@ -1,17 +1,10 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using StockExchangeAPI.Models;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using StockExchangeAPI.Models;
 
-public class UpdateStocksBackgroundService : IHostedService, IDisposable
+public class UpdateStocksBackgroundService : BackgroundService
 {
-    private Timer _timer;
+    private Dictionary<int, Timer> _stockTimers; // Dictionary to store timers for each stock
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<UpdateStocksBackgroundService> _logger;
     private readonly IHubContext<StockHub> _hubContext;
@@ -21,75 +14,92 @@ public class UpdateStocksBackgroundService : IHostedService, IDisposable
         _scopeFactory = scopeFactory;
         _logger = logger;
         _hubContext = hubContext;
+        _stockTimers = new Dictionary<int, Timer>();
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+ protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        _timer = new Timer(UpdateStocks, null, TimeSpan.Zero, TimeSpan.FromSeconds(5)); // Adjust the interval as needed
-        return Task.CompletedTask;
-    }
-
-private async void UpdateStocks(object state)
-{
-    try
-    {
-        using (var scope = _scopeFactory.CreateScope())
+        while (!cancellationToken.IsCancellationRequested)
         {
-            var context = scope.ServiceProvider.GetRequiredService<StockExchangeDBContext>();
-
-            var stocksToUpdate = context.Stocks.ToList(); // Get all stocks from the database
-
-            foreach (var stock in stocksToUpdate)
+            using (var scope = _scopeFactory.CreateScope())
             {
-                try
+                var context = scope.ServiceProvider.GetRequiredService<StockExchangeDBContext>();
+                var stocks = context.Stocks.ToList();
+
+                var randomList = stocks.OrderBy(x => Guid.NewGuid()).Take(Random.Shared.Next(1, stocks.Count + 1)).ToList();
+
+                foreach (var stock in randomList)
                 {
-                    // Simulate updating the stock price and timestamp (replace with actual update logic)
-                    stock.Price = Random.Shared.Next(100, 200);
-                    stock.TimeStamp = DateTime.Now;
-
-                    // Create a new stock history entry
-                    context.StockHistories.Add(new StockHistory
-                    {
-                        StockSymbol = stock.StockSymbol, // Ensure the StockSymbol is set
-                        TimeStamp = stock.TimeStamp,
-                        Price = stock.Price
-                    });
-
-                    // Notify clients about the updated stock
-                    await _hubContext.Clients.All.SendAsync("ReceiveStockUpdate", stock);
+                    UpdateStockPrice(stock);
                 }
-                catch (Exception ex)
+
+                // Notify clients about the updated stock
+                await _hubContext.Clients.All.SendAsync("ReceiveStockUpdate", randomList);
+            }
+            await Task.Delay(TimeSpan.FromSeconds(Random.Shared.Next(2,5)), cancellationToken);
+        }
+
+    }
+
+    private async void UpdateStockPrice(Stock stock)
+    {
+
+            try
+            {
+                using (var scope = _scopeFactory.CreateScope())
                 {
-                    _logger.LogError(ex, "An error occurred while updating stock with ID {StockId}: {ErrorMessage}", stock.StockId, ex.Message);
+                    var context = scope.ServiceProvider.GetRequiredService<StockExchangeDBContext>();
+
+                    // Retrieve the stock from the database (in case it was modified externally)
+                    var updatedStock = await context.Stocks.FindAsync(stock.StockId);
+
+                    if (updatedStock != null)
+                    {
+                        try
+                        {
+                            // Simulate updating the stock price and timestamp (replace with actual update logic)
+                            updatedStock.Price = Random.Shared.Next(100, 200);
+                            updatedStock.TimeStamp = DateTime.Now;
+
+                            stock.Price = updatedStock.Price;
+                            // Create a new stock history entry
+                            context.StockHistories.Add(new StockHistory
+                            {
+                                StockSymbol = updatedStock.StockSymbol,
+                                TimeStamp = updatedStock.TimeStamp,
+                                Price = updatedStock.Price
+                            });
+
+                            
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "An error occurred while updating stock with ID {StockId}: {ErrorMessage}", updatedStock.StockId, ex.Message);
+                        }
+
+                        try
+                        {
+                            await context.SaveChangesAsync();
+                        }
+                        catch (DbUpdateException ex)
+                        {
+                            _logger.LogError(ex, "An error occurred while saving changes: {ErrorMessage}", ex.InnerException?.Message);
+                        }
+                    }
                 }
             }
-
-try
-{
-    await context.SaveChangesAsync();
-}
-catch (DbUpdateException ex)
-{
-    // Log or print the inner exception message
-    _logger.LogError(ex, "An error occurred while saving changes: {ErrorMessage}", ex.InnerException?.Message);
-}
-        }
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "An error occurred while updating stocks: {ErrorMessage}", ex.Message);
-    }
-}
-
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        _timer?.Change(Timeout.Infinite, 0);
-        return Task.CompletedTask;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating stock with ID {StockId}: {ErrorMessage}", stock.StockId, ex.Message);
+            }
+            finally
+            {
+            }
+        
     }
 
-    public void Dispose()
-    {
-        _timer?.Dispose();
-    }
+
+
+
+   
 }

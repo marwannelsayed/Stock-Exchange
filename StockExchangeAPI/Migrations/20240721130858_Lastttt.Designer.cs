@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StockExchangeAPI.Models;
 
@@ -11,9 +12,11 @@ using StockExchangeAPI.Models;
 namespace StockExchangeAPI.Migrations
 {
     [DbContext(typeof(StockExchangeDBContext))]
-    partial class StockExchangeDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240721130858_Lastttt")]
+    partial class Lastttt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,6 +74,7 @@ namespace StockExchangeAPI.Migrations
                         .HasColumnType("varchar(20)");
 
                     b.Property<string>("Subscriber")
+                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
 

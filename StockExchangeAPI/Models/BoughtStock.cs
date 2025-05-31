@@ -13,6 +13,9 @@ namespace StockExchangeAPI.Models
         public int StockId { get; set; }
         [Required]
         [MaxLength(20)]
+        public string? UserBought { get; set; }
+        [Required]
+        [MaxLength(20)]
         public string? StockSymbol { get; set; }
         [Required]
         public int Price { get; set; }

@@ -16,6 +16,8 @@ namespace StockExchangeAPI.Models
         public int Price { get; set; }
         [Required]
         public DateTime TimeStamp { get; set; }
+        [MaxLength(20)]
+        public string? Subscriber { get; set; }
     }
 
 

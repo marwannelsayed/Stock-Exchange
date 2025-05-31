@@ -35,11 +35,13 @@ namespace StockExchangeAPI.Controllers
 
             if (stock == null)
             {
+                string username = User.Identity.Name;
                 var newStock = new Stock
                 {
                     StockSymbol = stockSymbol,
                     Price = Random.Shared.Next(100, 200),
-                    TimeStamp = DateTime.Now
+                    TimeStamp = DateTime.Now,
+                    Subscriber = username
                 };
                 _context.Stocks.Add(newStock);
                 await _context.SaveChangesAsync();
@@ -89,13 +91,16 @@ namespace StockExchangeAPI.Controllers
             {
                 return NotFound();
             }
+            
+            string username = User.Identity.Name;
 
             var boughtStock = new BoughtStock
             {
                 StockId = stock.StockId,
                 StockSymbol = symbol,
                 Price = price,
-                Quantity = quantity
+                Quantity = quantity,
+                UserBought =  username
             };
 
             _context.BoughtStocks.Add(boughtStock);

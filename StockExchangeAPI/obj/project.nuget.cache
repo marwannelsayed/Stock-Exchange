@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "YUVrQY4+3Is=",
+  "dgSpecHash": "bQX3dATySTk=",
   "success": true,
-  "projectFilePath": "/Users/marwannelsayed/Desktop/Derayah/Stock-Exchange/StockExchangeAPI/StockExchangeAPI.csproj",
+  "projectFilePath": "/Users/marwannelsayed/Desktop/M/Derayah/Stock-Exchange/StockExchangeAPI/StockExchangeAPI.csproj",
   "expectedPackageFiles": [
     "/Users/marwannelsayed/.nuget/packages/azure.core/1.35.0/azure.core.1.35.0.nupkg.sha512",
     "/Users/marwannelsayed/.nuget/packages/azure.identity/1.10.3/azure.identity.1.10.3.nupkg.sha512",

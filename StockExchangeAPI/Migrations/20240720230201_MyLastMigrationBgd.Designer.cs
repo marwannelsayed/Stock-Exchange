@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StockExchangeAPI.Models;
 
@@ -11,9 +12,11 @@ using StockExchangeAPI.Models;
 namespace StockExchangeAPI.Migrations
 {
     [DbContext(typeof(StockExchangeDBContext))]
-    partial class StockExchangeDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240720230201_MyLastMigrationBgd")]
+    partial class MyLastMigrationBgd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,10 +70,6 @@ namespace StockExchangeAPI.Migrations
 
                     b.Property<string>("StockSymbol")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<string>("Subscriber")
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
 

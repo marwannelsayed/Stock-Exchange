@@ -17,10 +17,9 @@ namespace StockExchangeAPI.Controllers
         private User _user;
         private StockExchangeDBContext _context;
 
-        public AuthController(IConfiguration configuration, User user, StockExchangeDBContext context)
+        public AuthController(IConfiguration configuration, StockExchangeDBContext context)
         {
             _configuration = configuration;
-            _user = user;
             _context = context;
         }
 
@@ -33,6 +32,7 @@ namespace StockExchangeAPI.Controllers
             {
                 if (BCrypt.Net.BCrypt.Verify(login.Password, user.Password))
                 {
+                    _user = user;
                     var token = GenerateJwtToken();
                     return Ok(new { token });
                 }
@@ -67,17 +67,44 @@ namespace StockExchangeAPI.Controllers
 
         private string GenerateJwtToken()
         {
+            // Fetch the JWT key from environment variables
             var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
-            var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
-            var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
-            var jwtExpiresInMinutes = Environment.GetEnvironmentVariable("JWT_EXPIRES_IN_MINUTES");
+            if (string.IsNullOrEmpty(jwtKey))
+            {
+                throw new ArgumentNullException(nameof(jwtKey), "JWT_KEY environment variable is not set.");
+            }
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+            // Fetch JWT configuration values from the appsettings.json configuration
+            var jwtIssuer = _configuration.GetValue<string>("Jwt:Issuer");
+            if (string.IsNullOrEmpty(jwtIssuer))
+            {
+                throw new ArgumentNullException(nameof(jwtIssuer), "Jwt:Issuer configuration value is not set.");
+            }
+
+            var jwtAudience = _configuration.GetValue<string>("Jwt:Audience");
+            if (string.IsNullOrEmpty(jwtAudience))
+            {
+                throw new ArgumentNullException(nameof(jwtAudience), "Jwt:Audience configuration value is not set.");
+            }
+
+            var jwtExpiresInMinutes = _configuration.GetValue<int>("Jwt:ExpiresInMinutes");
+            if (jwtExpiresInMinutes == 0)
+            {
+                throw new ArgumentException("Jwt:ExpiresInMinutes configuration value is not set or is invalid.");
+            }
+
+
+            if (_user == null || string.IsNullOrEmpty(_user.Username))
+            {
+                throw new ArgumentNullException(nameof(_user.Username), "_user or _user.Username is null or empty.");
+            }
+
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, "test"),
+                new Claim(JwtRegisteredClaimNames.UniqueName, _user.Username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -85,7 +112,7 @@ namespace StockExchangeAPI.Controllers
                 issuer: jwtIssuer,
                 audience: jwtAudience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(double.Parse(jwtExpiresInMinutes)),
+                expires: DateTime.UtcNow.AddMinutes(jwtExpiresInMinutes),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
