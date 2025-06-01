@@ -57,6 +57,3 @@ dotnet run --project StockExchangeAPI/StockExchangeAPI.csproj
 ```
 
 The API will be available at [http://localhost:5000](http://localhost:5000).
-
-### API Documentation
-Visit [http://localhost:5000/swagger](http://localhost:5000/swagger) for interactive API documentation using Swagger UI.
