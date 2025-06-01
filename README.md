@@ -60,21 +60,3 @@ The API will be available at [http://localhost:5000](http://localhost:5000).
 
 ### API Documentation
 Visit [http://localhost:5000/swagger](http://localhost:5000/swagger) for interactive API documentation using Swagger UI.
-
-## Project Structure
-
-- `StockExchangeAPI/Controllers/` - API endpoints:
-  - <mcsymbol name="StockExchangeController" filename="StockExchangeController.cs" path="StockExchangeAPI/Controllers/StockExchangeController.cs" startline="1" type="class"></mcsymbol>
-  - <mcsymbol name="AuthController" filename="AuthController.cs" path="StockExchangeAPI/Controllers/AuthController.cs" startline="1" type="class"></mcsymbol>
-
-- `StockExchangeAPI/Models/` - Entity models:
-  - <mcsymbol name="Stock" filename="Stock.cs" path="StockExchangeAPI/Models/Stock.cs" startline="1" type="class"></mcsymbol>
-  - <mcsymbol name="StockHistory" filename="StockHistory.cs" path="StockExchangeAPI/Models/StockHistory.cs" startline="1" type="class"></mcsymbol>
-
-- `StockExchangeAPI/Services/` - Core services:
-  - <mcsymbol name="UpdateStocksBackgroundService" filename="UpdateStocksBackgroundService.cs" path="StockExchangeAPI/Services/UpdateStocksBackgroundService.cs" startline="1" type="class"></mcsymbol>
-  - Stock repository pattern
-
-- `StockExchangeAPI/Migrations/` - Database migrations
-- `StockExchangeAPI/Hub/` - Real-time communication:
-  - <mcsymbol name="StockHub" filename="StockHub.cs" path="StockExchangeAPI/Hub/StockHub.cs" startline="1" type="class"></mcsymbol>
